@@ -161,8 +161,60 @@ run (LV2_Handle instance, uint32_t n_samples)
 		b[0] = (int)rint (*self->p_b[0]) & 0xff;
 		b[1] = (int)rint (*self->p_b[1]) & 0x7f;
 		b[2] = (int)rint (*self->p_b[2]) & 0x7f;
+		b[0] |= 0x80;
 		if (nb > 3) nb = 3;
-		forge_midimessage (self, 0, b, nb);
+		if (nb < 1) {
+			switch (b[0] >> 4) {
+				case 0x8: // Note Off
+				case 0x9: // Note On
+				case 0xa: // Key Aftertouch
+				case 0xb: // CC
+				case 0xe: // PitchBend
+					nb = 3;
+					break;
+				case 0xc: // PGM
+				case 0xd: // Chan Aftertouch
+					nb = 2;
+					break;
+				case 0xf: // System
+					switch (b[0] & 0xf) {
+						case 0x0: // SysEx Start
+						case 0x1: // MTC QFrame
+						case 0x4: // Reserved
+						case 0x5: // Reserved
+						case 0x9: // Reserved
+						case 0xd: // Reserved
+							nb = 0; //< N/A
+							break;
+						case 0x6: // Tune request
+						case 0x7: // End of SysEx (EOX)
+						case 0xa: // MClk: Start
+						case 0xb: // MClk: Stop
+						case 0xc: // MClk: Continue
+						case 0xe: // Active Sensing
+						case 0xf: // System Reset
+							nb = 1;
+							break;
+						case 0x3: // Song Select
+							nb = 2;
+							break;
+						case 0x2: // Song Position Pointer
+							nb = 3;
+							break;
+						default: /* cannot happen */
+							nb = 0;
+							break;
+					}
+					break;
+					default: /* cannot happen */
+					nb = 0;
+					break;
+			}
+		}
+
+		if (nb > 0) {
+			forge_midimessage (self, 0, b, nb);
+		}
 	}
 	self->c_trigger = *self->p_trigger > 0;
 }
