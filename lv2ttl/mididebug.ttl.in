@@ -20,7 +20,7 @@
 	a lv2:Plugin, doap:Project, lv2:UtilityPlugin;
 	doap:license <http://usefulinc.com/doap/licenses/gpl>;
 	doap:maintainer <http://gareus.org/rgareus#me>;
-	doap:name "MIDI Debug Event Generator";
+	doap:name "MIDI Event Generator";
 	@VERSION@
 	lv2:optionalFeature lv2:hardRTCapable;
 	lv2:requiredFeature urid:map;
