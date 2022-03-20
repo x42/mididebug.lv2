@@ -11,7 +11,7 @@ Install
 Compiling mididebug.lv2 requires the LV2 SDK, gnu-make, and a c-compiler.
 
 ```bash
-  git clone git://github.com/x42/mididebug.lv2.git
+  git clone https://github.com/x42/mididebug.lv2.git
   cd mididebug.lv2
   make
   sudo make install PREFIX=/usr
